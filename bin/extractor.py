@@ -23,22 +23,26 @@ import matplotlib.dates as mdates
 from IPython import embed
 
 
-def read_fits(f, line, width):
+def read_fits(f, line, width, names):
     try:
         logging.debug("Reading file: %s" % f)
         with pf.open(f) as hdu:
             x = hdu[1].data.field('WAVE')
             y = hdu[1].data.field('FLUX')
+
             hdr = hdu[0].header
             name = hdr['OBJECT']
             if width:
                 line = int(line)
                 width = int(width)
                 y = y[(x > line - width) & (x < line + width)]
-                
-            data = [name] + list(y)
+
+            y = list(y)
+
+            if names:    
+                y = [name] + y
         logging.debug("Reading file done")
-        return data
+        return y
     except Exception, e:
         raise e
         sys.stderr.write("%s: cannot open file '%s'\n" % (sys.argv[0], f))
@@ -83,6 +87,9 @@ def main():
 
     parser.add_argument( '-w', '--width', action='store',
                       default=None, help='Specify spectral line range limit')
+
+    parser.add_argument( '-N', '--names', action='store_true',
+                      default=False, help='Include names of the star into result')
         
     
     args = parser.parse_args()
@@ -111,7 +118,7 @@ def main():
     files = file_list(args.source)[:args.nrows]
 
     for f in files:
-        data = [args.category] + read_fits(f, args.line, args.width) 
+        data = [args.category] + read_fits(f, args.line, args.width, args.names) 
         save2csv(data)
 
     
