@@ -21,6 +21,7 @@ import dateutil.parser as p
 from itertools import islice
 import matplotlib.dates as mdates
 from IPython import embed
+items = 0
 
 
 def read_fits(f, line, width, names):
@@ -36,12 +37,19 @@ def read_fits(f, line, width, names):
                 line = int(line)
                 width = int(width)
                 y = y[(x > line - width) & (x < line + width)]
+                #ugly because some files missing some pixels
+                global items
+                if not items:
+                    items = len(y) - 1
+                y = y[:items]
+
 
             y = list(y)
 
             if names:    
                 y = [name] + y
         logging.debug("Reading file done")
+
         return y
     except Exception, e:
         raise e
@@ -116,6 +124,7 @@ def main():
 
 
     files = file_list(args.source)[:args.nrows]
+
 
     for f in files:
         data = [args.category] + read_fits(f, args.line, args.width, args.names) 
