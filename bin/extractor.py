@@ -56,10 +56,6 @@ def read_fits(f, line, width, names):
         sys.stderr.write("%s: cannot open file '%s'\n" % (sys.argv[0], f))
         pass
 
-def file_list(thedir):
-    return glob.glob(os.path.join(thedir, '*.fits'))
-            
-
 
 def save2csv(data):
     try:
@@ -78,9 +74,6 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument( '-s', '--source', action='store',
                       default=None, required=True, help='specify input dir')
-
-    parser.add_argument( '-c', '--category', action='store',
-                      default=None, required=True, help='specify category')
 
     parser.add_argument( '-o', '--output', action='store',
                       default=None, help='specify output file')
@@ -122,12 +115,13 @@ def main():
     if args.nrows:
         args.nrows = int(args.nrows)
 
-
-    files = file_list(args.source)[:args.nrows]
+    path = os.path.join(args.source,'*/*/*.fits')
+    files = glob.glob(path)[:args.nrows]
 
 
     for f in files:
-        data = [args.category] + read_fits(f, args.line, args.width, args.names) 
+        # get category name (third dir from right) + data
+        data = [f.split(os.path.sep)[-3]] + read_fits(f, args.line, args.width, args.names) 
         save2csv(data)
 
     
