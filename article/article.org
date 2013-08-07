@@ -1,0 +1,109 @@
+* Spectra classification without features extraction
+** Experiment description
+   The aim of this experiment is to test if it is possible to train
+   machine learning algorithm (Support Vector Machine (svm) in this case)
+   to discriminate between manually selected groups of Be stars spectra. 
+** Training set
+   Training set consist of 2164 spectra from Ondrejov archive divided
+   into 4 distinct categories based on the region around Balmer
+   H-alpha line (which is interesting region for that type of
+   stars). The spectra were normalized and trimmed to 100\AA around
+   H-alpha. Numbers of spectra in individual categories are following
+
+   | category | count |
+   |----------+-------|
+   |        1 |   408 |
+   |        2 |   289 |
+   |        3 |  1366 |
+   |        4 |   129 |
+
+   For better understanding of the categories characteristics there is
+   a plot of 25 random samples in pic1 and characteristics spectrum of
+   individual categories created as a sum of all spectra in
+   corresponding category (pic2)
+   
+   #There are also series of box plots which shows distinct properties
+   #of categories on the pic3. 
+
+   PCA (Principal component analysis) were also performed to visually
+   check if there is a separation (and therefore a chance) to
+   discriminate between individual classes. See pic4 
+
+** Support Vector Machine (SVM)
+   are a set of supervised learning methods used for classification,
+   regression and outliers detection [1].  SVM creates a hyper-plane in
+   high dimensional space and uses it for classification. The aim is
+   to find hyper-plane with largest functional margin which means lower
+   the generalization error of the classifier.
+
+   For details see [2]
+
+** Model Selection with Grid Search
+   SVM kernel (rbf in this case) of the svm are controlled by so
+   called hyper parameters (C and gamma in this case). To find optimum
+   values for this experiment we have used Grid Search which
+   performs cross-validation for different values of the hyper
+   parameters.
+
+   | parameters             | score              |
+   |------------------------+--------------------|
+   | C=100.0, gamma=0.01:   | 0.985 (+/-0.003) * |
+   | C=10.0, gamma=0.1:     | 0.978 (+/-0.003) * |
+   | C=100.0, gamma=0.1:    | 0.977 (+/-0.004) * |
+   | C=10.0, gamma=0.01:    | 0.973 (+/-0.002)   |
+   | C=1.0, gamma=0.1:      | 0.970 (+/-0.003)   |
+   | C=100.0, gamma=0.001:  | 0.969 (+/-0.002)   |
+   | C=1.0, gamma=1.0:      | 0.966 (+/-0.003)   |
+   | C=10.0, gamma=1.0:     | 0.965 (+/-0.004)   |
+   | C=100.0, gamma=1.0:    | 0.965 (+/-0.004)   |
+   | C=1.0, gamma=0.01:     | 0.958 (+/-0.002)   |
+   | C=10.0, gamma=0.001:   | 0.956 (+/-0.003)   |
+   | C=100.0, gamma=0.0001: | 0.953 (+/-0.003)   |
+   | C=0.1, gamma=0.1:      | 0.929 (+/-0.005)   |
+   | C=10.0, gamma=0.0001:  | 0.915 (+/-0.004)   |
+   | C=1.0, gamma=0.001:    | 0.914 (+/-0.003)   |
+   | C=0.1, gamma=0.01:     | 0.908 (+/-0.003)   |
+   | C=0.1, gamma=1.0:      | 0.885 (+/-0.004)   |
+   | C=1.0, gamma=0.0001:   | 0.811 (+/-0.003)   |
+   | C=0.1, gamma=0.001:    | 0.811 (+/-0.003)   |
+   | C=0.1, gamma=0.0001:   | 0.785 (+/-0.003)   |
+
+   Based on this result C=100.0, gamma=0.01 was used in following experiments.
+
+** Learning curve
+   Is an important tool which help us understand the behavior of the
+   selected model. As you can see on the pic5 from about 1000 samples
+   there is not big improvement and there is probably not necessary to
+   have more than 1300 samples. Of course this is valid only for this
+   model and data.
+
+** Classification
+   10-fold cross-validation with samples size=0.1 was performed with
+   Mean score: 0.988 (+/-0.002).
+
+   
+   There is a detailed report (now based on test sample=0.25)
+   
+   | class     | precision | recall | f1-score | support |
+   |-----------+-----------+--------+----------+---------|
+   |         1 |      0.98 |   0.96 |     0.97 |     100 |
+   |         2 |      0.95 |   0.97 |     0.96 |      72 |
+   |         3 |      1.00 |   1.00 |     1.00 |     341 |
+   |         4 |      0.96 |   0.96 |     0.96 |      28 |
+   |-----------+-----------+--------+----------+---------|
+   | avg/total |      0.99 |   0.99 |     0.99 |     541 |
+
+** Miss-clasification
+   There were 29 miss-clasified cases (based on test_size= 0.25). Pic6
+   shows that spectra
+
+   
+   
+** Used tools
+   scikit-learn a python based framework and IPython-interactive shell
+   were used during the experiment.
+
+** References
+[1] [[http://scikit-learn.org/stable/modules/svm.html][svm definition at scikit.org]]
+[2] [[http://www.springerlink.com/content/k238jx04hm87j80g/][Cortes, Corinna; and Vapnik, Vladimir N.; "Support-Vector Networks", Machine Learning, 20, 1995]]
+[3] [[http://physics.muni.cz/~ssa/archive/][Ondrejov archive]]
