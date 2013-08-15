@@ -14,7 +14,7 @@
    |----------+-------|
    |        1 |   408 |
    |        2 |   289 |
-   |        3 |  1366 |
+   |        3 |  1338 |
    |        4 |   129 |
 
    For better understanding of the categories characteristics there is
@@ -94,7 +94,7 @@
    | avg/total |      0.99 |   0.99 |     0.99 |     541 |
 
 ** Miss-clasification
-   There were 29 miss-clasified cases (based on test_size= 0.25). Pic6
+   There were 8 miss-clasified cases (based on test_size= 0.25). Pic6
    shows that spectra
 
    
