@@ -121,7 +121,8 @@ def main():
 
     for f in files:
         # get category name (third dir from right) + data
-        data = [f.split(os.path.sep)[-3]] + read_fits(f, args.line, args.width, args.names) 
+        path = f.split(os.path.sep)
+        data = [p for p in path[1:]] + read_fits(f, args.line, args.width, args.names) 
         save2csv(data)
 
     
