@@ -58,7 +58,6 @@ def save2csv(data):
 
 
 def main():
-
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--source', action='store',
                         default=None, required=True, help='specify input dir')
@@ -79,6 +78,7 @@ def main():
 
     parser.add_argument('-N', '--names', action='store_true', default=False,
                         help='Include names of the star into result')
+
     args = parser.parse_args()
 
     #
@@ -100,13 +100,14 @@ def main():
 
     if args.nrows:
         args.nrows = int(args.nrows)
-
-    files = glob.glob(args.sourc)[:args.nrows]
+    path = os.path.join(args.source, '*', '*', '*.fits')
+    files = glob.glob(path)[:args.nrows]
 
     for f in files:
         # get category name (third dir from right) + data
         path = f.split(os.path.sep)
         data = [p for p in path[1:]] + read_fits(f, args.line, args.width, args.names)
+        #data = [path[1]] + [p for p in path[4:]] + read_fits(f, args.line, args.width, args.names)
         save2csv(data)
 
 if __name__ == '__main__':
